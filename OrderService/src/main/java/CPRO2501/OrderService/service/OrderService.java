@@ -38,23 +38,31 @@ public class OrderService {
         // get list of books from getAllBooks method that communicates with BookService
         List<Book> books = getAllBooks();
 
+        // initialize the Book object outside the loop
+        Book foundBook = null;
+
         // iterate through list of books to check if they have the specified title
         for (Book b : books) {
             if (b.getTitle().equalsIgnoreCase(title)) {
-                // create a string with the book details and the status of the order
-                String orderInfo = "Book: " + b.getTitle() + "\n"
-                    + "Author: " + b.getAuthor() + "\n"
-                    + "ISBN:  " + b.getIsbn() + "\n"
-                    + "Genre:  " + b.getGenre() + "\n"
-                    + "Price:  " + b.getPrice() + "\n"
-                    + "Status: Order placed!";
+                // set the foundBook
+                foundBook = b;
 
-                // return the order information
-                return orderInfo;
+                break;
             }
         }
 
-        // return error message if no book found
-        return ("Book could not be found.");
+        // if book with specified title is found, create string with order details and return
+        if (foundBook != null) {
+            String orderInfo = "Book: " + foundBook.getTitle() + "\n"
+                    + "Author: " + foundBook.getAuthor() + "\n"
+                    + "Genre: " + foundBook.getGenre() + "\n"
+                    + "ISBN: " + foundBook.getIsbn() + "\n"
+                    + "Price: " + foundBook.getPrice() + "\n"
+                    + "Status: Order placed!";
+            return orderInfo;
+        } else {
+            // if no book is found, return error message
+            return ("Book could not be found.");
+        }
     }
 }
