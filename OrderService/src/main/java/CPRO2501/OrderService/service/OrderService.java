@@ -13,13 +13,13 @@ import java.util.List;
 // handles business logic related to book orders
 @Service
 public class OrderService {
+    // add RestTemplate as property to be able to inject restTemplate mock into OrderService
+    private RestTemplate restTemplate = new RestTemplate();
+
     // retrieve list of books from BookService
     public List<Book> getAllBooks() {
         // specifies endpoint URL where HTTP request will be sent
         String url = "http://localhost:8080/books/all";
-
-        // create new instance of RestTemplate
-        RestTemplate restTemplate = new RestTemplate();
 
         // use RestTemplate exchange method to execute HTTP GET request on the defined URL
         ResponseEntity<List<Book>> response = restTemplate.exchange(
