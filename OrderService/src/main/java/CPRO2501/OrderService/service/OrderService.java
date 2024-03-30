@@ -55,6 +55,6 @@ public class OrderService {
         }
 
         // return error message if no book found
-        return ("No book found with the title: " + title);
+        return ("Book could not be found.");
     }
 }
