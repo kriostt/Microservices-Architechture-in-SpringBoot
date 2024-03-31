@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -63,7 +64,7 @@ public class BookControllerTest {
     }
 
     @Test
-    void getAllBooksTestShouldReturnAllBooks() throws Exception {
+    void getAllExistingBooksTestShouldReturnAllBooks() throws Exception {
         // create a sample book
         Book book = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
 
@@ -82,7 +83,20 @@ public class BookControllerTest {
     }
 
     @Test
-    void getBookByIdTestShouldReturnBook() throws Exception {
+    void getAllNonexistentBooksTestShouldReturnNothing() throws Exception {
+        // mock the behaviour of bookService.getAllBooks() to return null
+        given(bookService.getAllBooks()).willReturn(null);
+
+        // perform a GET request to the "/books/all" endpoint
+        mockMvc.perform(get("/books/all"))
+                // expect a status code of 200 (OK)
+                .andExpect(status().isOk())
+                // expect the response content to be empty
+                .andExpect(content().string(""));
+    }
+
+    @Test
+    void getBookByIdTestShouldReturnBook_WhenBookExists() throws Exception {
         // create a sample book
         Book expectedBook = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
 
@@ -95,6 +109,48 @@ public class BookControllerTest {
                 .andExpect(status().isOk())
                 // expect the response content to match the provided JSON representation of the book
                 .andExpect(content().json("{'id': 1, 'title': 'Night', 'author': 'Elie Wiesel', 'genre': 'Memoir', 'isbn': '978-0-8090-7350-4', 'price': 15.00}"));
+    }
+
+    @Test
+    void getBookByIdShouldReturnNothing_WhenBookDoesNotExist() throws Exception {
+        // mock the behaviour of bookService.getBookById() to return null
+        given(bookService.getBookById(1L)).willReturn(null);
+
+        // perform a GET request to the "/books/{id}" endpoint with ID 1
+        mockMvc.perform(get("/books/{id}", 1L))
+                // expect a status code of 200 (OK)
+                .andExpect(status().isOk())
+                // expect the response content to be empty
+                .andExpect(content().string(""));
+    }
+
+    @Test
+    void getBookByTitleShouldReturnBook_WhenBookExists() throws Exception {
+        // create a sample book
+        Book expectedBook = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
+
+        // mock the behaviour of bookService.getBookByTitle() to return the expected book
+        given(bookService.getBookByTitle("Night")).willReturn(expectedBook);
+
+        // perform a GET request to the "/books/title/{title}" endpoint with title Night
+        mockMvc.perform(get("/books/title/{title}", "Night"))
+                // expect a status code of 200 (OK)
+                .andExpect(status().isOk())
+                // expect the response content to match the provided JSON representation of the book
+                .andExpect(content().json("{'id': 1, 'title': 'Night', 'author': 'Elie Wiesel', 'genre': 'Memoir', 'isbn': '978-0-8090-7350-4', 'price': 15.00}"));
+    }
+
+    @Test
+    void getBookByTitleShouldReturnNothing_WhenBookDoesNotExist() throws Exception {
+        // mock the behaviour of bookService.getBookByTitle() to return null
+        given(bookService.getBookByTitle("Night")).willReturn(null);
+
+        // perform a GET request to the "/books/title/{title}" endpoint with title Night
+        mockMvc.perform(get("/books/title/{title}", "Night"))
+                // expect a status code of 200 (OK)
+                .andExpect(status().isOk())
+                // expect the response content to be empty
+                .andExpect(content().string(""));
     }
 
     @Test
