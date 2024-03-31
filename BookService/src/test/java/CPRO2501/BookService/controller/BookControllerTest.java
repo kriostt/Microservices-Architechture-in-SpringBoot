@@ -64,7 +64,7 @@ public class BookControllerTest {
     }
 
     @Test
-    void getAllExistingBooksTestShouldReturnAllBooks() throws Exception {
+    void getAllBooksTestShouldReturnAllBooks_WhenBooksExist() throws Exception {
         // create a sample book
         Book book = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
 
@@ -83,7 +83,7 @@ public class BookControllerTest {
     }
 
     @Test
-    void getAllNonexistentBooksTestShouldReturnNothing() throws Exception {
+    void getAllBooksTestShouldReturnNothing_WhenBooksDoNotExist() throws Exception {
         // mock the behaviour of bookService.getAllBooks() to return null
         given(bookService.getAllBooks()).willReturn(null);
 

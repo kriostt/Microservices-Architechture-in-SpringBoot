@@ -40,7 +40,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    void getAllExistingBooksTestShouldReturnAllBooks() throws Exception {
+    void getAllBooksTestShouldReturnAllBooks_WhenBooksExist() throws Exception {
         // create a sample book
         Book book = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
 
@@ -59,7 +59,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    void getAllNonexistentBooksTestShouldReturnNothing() throws Exception {
+    void getAllBooksTestShouldReturnNothing_WhenBooksDoNotExist() throws Exception {
         // mock the behaviour of orderService.getAllBooks() to return null
         given(orderService.getAllBooks()).willReturn(null);
 
