@@ -35,34 +35,35 @@ public class OrderService {
 
     // retrieve a book with a specific title
     public String getBookByTitle(String title) {
-        // get list of books from getAllBooks method that communicates with BookService
-        List<Book> books = getAllBooks();
+        // specifies endpoint URL where HTTP request will be sent
+        String url = "http://localhost:8080/books/title/" + title;
 
-        // initialize the Book object outside the loop
-        Book foundBook = null;
+        // use RestTemplate exchange method to execute HTTP GET request on the defined URL
+        ResponseEntity<Book> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                HttpEntity.EMPTY, // no request body required
+                new ParameterizedTypeReference<Book>() {} // specifies type of response body
+        );
 
-        // iterate through list of books to check if they have the specified title
-        for (Book b : books) {
-            if (b.getTitle().equalsIgnoreCase(title)) {
-                // set the foundBook
-                foundBook = b;
+        // create foundBook variable to hold the body of the response
+        Book foundBook = response.getBody();
 
-                break;
-            }
-        }
-
-        // if book with specified title is found, create string with order details and return
+        // check if a book was returned
         if (foundBook != null) {
+            // create string with order information
             String orderInfo = "Book: " + foundBook.getTitle() + "\n"
                     + "Author: " + foundBook.getAuthor() + "\n"
                     + "Genre: " + foundBook.getGenre() + "\n"
                     + "ISBN: " + foundBook.getIsbn() + "\n"
                     + "Price: " + foundBook.getPrice() + "\n"
                     + "Status: Order placed!";
+
+            // return the order information
             return orderInfo;
         } else {
             // if no book is found, return error message
-            return ("Book could not be found.");
+            return "Book could not be found.";
         }
     }
 }
