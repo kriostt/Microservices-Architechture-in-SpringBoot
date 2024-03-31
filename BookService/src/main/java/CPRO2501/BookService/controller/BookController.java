@@ -3,7 +3,6 @@ package CPRO2501.BookService.controller;
 import CPRO2501.BookService.entity.Book;
 import CPRO2501.BookService.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

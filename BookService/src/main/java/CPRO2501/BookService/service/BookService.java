@@ -3,8 +3,6 @@ package CPRO2501.BookService.service;
 import CPRO2501.BookService.entity.Book;
 import CPRO2501.BookService.repository.IBookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
