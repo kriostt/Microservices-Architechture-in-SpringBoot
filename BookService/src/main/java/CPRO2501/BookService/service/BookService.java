@@ -3,8 +3,11 @@ package CPRO2501.BookService.service;
 import CPRO2501.BookService.entity.Book;
 import CPRO2501.BookService.repository.IBookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 // handles business logic related to Book entities
@@ -22,12 +25,30 @@ public class BookService {
 
     // retrieve all books
     public List<Book> getAllBooks() {
-        return repository.findAll();
+        List<Book> books = repository.findAll();
+        return books != null ? books : Collections.emptyList();
     }
 
     // retrieve a single book by ID
     public Book getBookById(long id) {
         return repository.findById(id).orElse(null);
+    }
+
+    // retrieve a single book by title
+    public Book getBookByTitle(String title) {
+        // get list of books
+        List<Book> books = repository.findAll();
+
+        // iterate through list of books to check if they have the specified title
+        for (Book b : books) {
+            if (b.getTitle().equalsIgnoreCase(title)) {
+                // if book with specified title found, return the book
+                return b;
+            }
+        }
+
+        // if no book with the specified title found, return null
+        return null;
     }
 
     // update existing book
@@ -39,8 +60,8 @@ public class BookService {
         if (existingBook != null) {
             existingBook.setTitle(updatedBook.getTitle());
             existingBook.setAuthor(updatedBook.getAuthor());
-            existingBook.setIsbn(updatedBook.getIsbn());
             existingBook.setGenre(updatedBook.getGenre());
+            existingBook.setIsbn(updatedBook.getIsbn());
             existingBook.setPrice(updatedBook.getPrice());
 
             // return success message

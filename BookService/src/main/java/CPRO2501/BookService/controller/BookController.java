@@ -3,6 +3,7 @@ package CPRO2501.BookService.controller;
 import CPRO2501.BookService.entity.Book;
 import CPRO2501.BookService.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,12 @@ public class BookController {
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable long id) {
         return bookService.getBookById(id);
+    }
+
+    // handle HTTP GET request to retrieve a book by title
+    @GetMapping("/title/{title}")
+    public Book getBookByTitle(@PathVariable String title) {
+        return bookService.getBookByTitle(title);
     }
 
     // handle HTTP PUT request to update existing book
