@@ -40,7 +40,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    void getAllBooksTestShouldReturnAllBooks() throws Exception {
+    void getAllExistingBooksTestShouldReturnAllBooks() throws Exception {
         // create a sample book
         Book book = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
 
@@ -56,6 +56,19 @@ public class OrderControllerTest {
                 .andExpect(status().isOk())
                 // expect the response content to match the provided JSON representation of the book
                 .andExpect(content().json("[{'id': 1, 'title': 'Night', 'author': 'Elie Wiesel', 'genre': 'Memoir', 'isbn': '978-0-8090-7350-4', 'price': 15.00}]"));
+    }
+
+    @Test
+    void getAllNonexistentBooksTestShouldReturnNothing() throws Exception {
+        // mock the behaviour of orderService.getAllBooks() to return null
+        given(orderService.getAllBooks()).willReturn(null);
+
+        // perform a GET request to the "/orders/available-books" endpoint
+        mockMvc.perform(get("/orders/available-books"))
+                // expect a status code of 200 (OK)
+                .andExpect(status().isOk())
+                // expect the response content to be empty
+                .andExpect(content().string(""));
     }
 
     @Test
