@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +50,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void getAllBooksTest() {
+    void getAllExistingBooksTest() {
         // create a sample book
         Book book = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
 
@@ -67,7 +68,19 @@ public class BookServiceTest {
     }
 
     @Test
-    void getBookByIdTest() {
+    void getAllNonexistentBooksTest() {
+        // mock the behaviour of the repository to return empty list when findAll() is called
+        given(repository.findAll()).willReturn(Collections.emptyList());
+
+        // call the getAllBooks method
+        List<Book> actualBooks = bookService.getAllBooks();
+
+        // assert that the expected response is equal to the actual response
+        assertEquals(Collections.emptyList(), actualBooks);
+    }
+
+    @Test
+    void getExistingBookByIdTest() {
         // create a sample book
         Book expectedBook = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
 
@@ -79,6 +92,48 @@ public class BookServiceTest {
 
         // assert that the expectedBook is equal to the actualBook
         assertEquals(expectedBook, actualBook);
+    }
+
+    @Test
+    void getNonexistentBookByIdTest() {
+        // mock the behaviour of the repository to return empty list when findAll() is called
+        given(repository.findAll()).willReturn(Collections.emptyList());
+
+        // call the getBookById method
+        Book actualBook = bookService.getBookByTitle("Night");
+
+        // assert that the expected response is equal to the actual response
+        assertEquals(null, actualBook);
+    }
+
+    @Test
+    void getExistingBookByTitleTest() {
+        // create a sample book
+        Book expectedBook = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
+
+        // create a list containing the sample book
+        List<Book> expectedBooks = List.of(expectedBook);
+
+        // mock the behaviour of the repository to return the list of expected books when findAll() is called
+        given(repository.findAll()).willReturn(expectedBooks);
+
+        // call the getBookByTitle method
+        Book actualBook = bookService.getBookByTitle("Night");
+
+        // assert that the expectedBook is equal to the actualBook
+        assertEquals(expectedBook, actualBook);
+    }
+
+    @Test
+    void getNonexistentBookByTitleTest() {
+        // mock the behaviour of the repository to return empty list when findAll() is called
+        given(repository.findAll()).willReturn(Collections.emptyList());
+
+        // call the getBookByTitle method
+        Book actualBook = bookService.getBookByTitle("Night");
+
+        // assert that the expected response is equal to the actual response
+        assertEquals(null, actualBook);
     }
 
     @Test
