@@ -1,6 +1,7 @@
 package CPRO2501.OrderService.service;
 
 import CPRO2501.BookService.entity.Book;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,11 +27,14 @@ public class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 
-    @Test
-    void getAllBooksTest() {
-        // initialize mocks
+    // set up Mockito annotations before each test method
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
 
+    @Test
+    void getAllExistingBooksTest() {
         // create a sample book
         Book book = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
 
@@ -56,26 +60,48 @@ public class OrderServiceTest {
     }
 
     @Test
+    void getAllNonexistentBooksTest() {
+        // define the ResponseEntity that will be returned by the mocked RestTemplate
+        ResponseEntity<List<Book>> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
+
+        // mock the behaviour of restTemplate.exchange() to return responseEntity
+        when(restTemplate.exchange(
+                anyString(),
+                any(HttpMethod.class),
+                any(HttpEntity.class),
+                any(ParameterizedTypeReference.class))
+        ).thenReturn(responseEntity);
+
+        // call the getAllBooks method
+        List<Book> actualBooks = orderService.getAllBooks();
+
+        // assert that the expected response is equal to the actual response
+        assertEquals(null, actualBooks);
+    }
+
+    @Test
     void getExistingBookByTitleTest() {
-        // create a mock of OrderService
-        OrderService orderService = Mockito.spy(new OrderService());
-
         // create a sample book
-        Book book = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
-
-        // create a list containing the sample book
-        List<Book> expectedBooks = List.of(book);
-
-        // mock the behavior of orderService.getAllBooks() to return expectedBooks
-        given(orderService.getAllBooks()).willReturn(expectedBooks);
+        Book expectedBook = new Book(1, "Night", "Elie Wiesel", "Memoir", "978-0-8090-7350-4", 15.00);
 
         // create an expected response
-        String expectedResponse = "Book: " + book.getTitle() + "\n"
-                + "Author: " + book.getAuthor() + "\n"
-                + "Genre: " + book.getGenre() + "\n"
-                + "ISBN: " + book.getIsbn() + "\n"
-                + "Price: " + book.getPrice() + "\n"
+        String expectedResponse = "Book: " + expectedBook.getTitle() + "\n"
+                + "Author: " + expectedBook.getAuthor() + "\n"
+                + "Genre: " + expectedBook.getGenre() + "\n"
+                + "ISBN: " + expectedBook.getIsbn() + "\n"
+                + "Price: " + expectedBook.getPrice() + "\n"
                 + "Status: Order placed!";
+
+        // define the ResponseEntity that will be returned by the mocked RestTemplate
+        ResponseEntity<Book> responseEntity = new ResponseEntity<>(expectedBook, HttpStatus.OK);
+
+        // mock the behaviour of restTemplate.exchange() to return responseEntity
+        when(restTemplate.exchange(
+                anyString(),
+                any(HttpMethod.class),
+                any(HttpEntity.class),
+                any(ParameterizedTypeReference.class))
+        ).thenReturn(responseEntity);
 
         // call the getBookByTitle method
         String actualResponse = orderService.getBookByTitle("Night");
@@ -86,14 +112,19 @@ public class OrderServiceTest {
 
     @Test
     void getNonexistentBookByTitleTest() {
-        // create a mock of OrderService
-        OrderService orderService = Mockito.spy(new OrderService());
-
-        // mock the behavior of orderService.getAllBooks() to return empty
-        given(orderService.getAllBooks()).willReturn(Collections.emptyList());
-
         // create an expected response
         String expectedResponse = "Book could not be found.";
+
+        // define the ResponseEntity that will be returned by the mocked RestTemplate
+        ResponseEntity<Book> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
+
+        // mock the behaviour of restTemplate.exchange() to return responseEntity
+        when(restTemplate.exchange(
+                anyString(),
+                any(HttpMethod.class),
+                any(HttpEntity.class),
+                any(ParameterizedTypeReference.class))
+        ).thenReturn(responseEntity);
 
         // call the getBookByTitle method
         String actualResponse = orderService.getBookByTitle("Night");
